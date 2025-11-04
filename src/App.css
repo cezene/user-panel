@@ -1,5 +1,5 @@
 body {
-  background-color: #0069b4;
+  background: #d5e5f2;
 }
 .header {
   background-color: white;
@@ -8,4 +8,53 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.search-bar {
+  background-color: white;
+  width: 50%;
+}
+.table-container {
+  background: linear-gradient(
+    135deg,
+    #0069b4 0%,
+    #0081e3 50%,
+    #0099ff 100%
+  ) !important;
+  border-radius: 10px !important;
+}
+
+.table-header-cell {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  backdrop-filter: blur(10px);
+}
+
+.table-body-cell {
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.table-body-row:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.status-chip {
+  color: white !important;
+}
+
+.status-active {
+  background-color: rgba(76, 175, 80, 0.8) !important;
+}
+
+.status-inactive {
+  background-color: rgba(244, 67, 54, 0.8) !important;
+}
+
+.table-action-button {
+  color: white !important;
+}
+
+.table-action-button:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
 }
