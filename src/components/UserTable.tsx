@@ -8,8 +8,8 @@ import {
   Chip,
   IconButton,
   Box,
-} from "@mui/material";
-import { Edit, Delete } from "@mui/icons-material";
+} from '@mui/material';
+import { Edit, Delete } from '@mui/icons-material';
 
 const UserTable = ({ users, onEdit, onDelete }: UserTableProps) => {
   return (
@@ -33,9 +33,9 @@ const UserTable = ({ users, onEdit, onDelete }: UserTableProps) => {
               <TableCell className="table-body-cell">
                 <Chip
                   className={`status-chip ${
-                    user.status === "Ativo"
-                      ? "status-active"
-                      : "status-inactive"
+                    user.status === 'Ativo'
+                      ? 'status-active'
+                      : 'status-inactive'
                   }`}
                   label={user.status}
                   size="small"
@@ -43,7 +43,7 @@ const UserTable = ({ users, onEdit, onDelete }: UserTableProps) => {
                 />
               </TableCell>
               <TableCell className="table-body-cell" align="center">
-                <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
                   <IconButton
                     size="small"
                     onClick={() => onEdit(user)}

@@ -4,7 +4,7 @@ const Header = () => {
       <img
         src="/zuchetti-logo.png"
         alt="Zucchetti"
-        style={{ height: "40px" }}
+        style={{ height: '40px' }}
       />
     </header>
   );

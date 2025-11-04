@@ -1,5 +1,5 @@
-import { TextField, InputAdornment, Box } from "@mui/material";
-import { Search } from "@mui/icons-material";
+import { TextField, InputAdornment, Box } from '@mui/material';
+import { Search } from '@mui/icons-material';
 
 const SearchBar = ({ value, onChange }: SearchBarProps) => {
   return (
