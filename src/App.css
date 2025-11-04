@@ -11,7 +11,7 @@ body {
 }
 .search-bar {
   background-color: white;
-  width: 50%;
+  width: 100%;
 }
 .table-container {
   background: linear-gradient(
@@ -57,4 +57,16 @@ body {
 
 .table-action-button:hover {
   background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.add-user-button {
+  border-radius: 2px;
+  padding: 8px 16px;
+  background-color: grey.800;
+  color: white;
+  font-weight: 500;
+}
+
+.add-user-button:hover {
+  background-color: grey.900;
 }
