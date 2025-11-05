@@ -22,3 +22,10 @@ declare interface UserFormProps {
   onClose: () => void;
   onSubmit: (userData: User) => void;
 }
+
+declare interface DeleteConfirmationProps {
+  open: boolean;
+  user: User | null;
+  onClose: () => void;
+  onConfirm: () => void;
+}

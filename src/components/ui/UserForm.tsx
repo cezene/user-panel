@@ -12,15 +12,30 @@ import {
   Radio,
   Box,
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const UserForm = ({ user, open, onClose, onSubmit }: UserFormProps) => {
   const [formData, setFormData] = useState<User>({
-    id: user?.id || 0,
-    name: user?.name || '',
-    email: user?.email || '',
-    status: user?.status || 'Ativo',
+    id: 0,
+    name: '',
+    email: '',
+    status: 'Ativo',
   });
+
+  useEffect(() => {
+    if (open) {
+      if (user) {
+        setFormData(user);
+      } else {
+        setFormData({
+          id: 0,
+          name: '',
+          email: '',
+          status: 'Ativo',
+        });
+      }
+    }
+  }, [open, user]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,13 +49,16 @@ const UserForm = ({ user, open, onClose, onSubmit }: UserFormProps) => {
         [field]: e.target.value,
       }));
     };
+
   const isEditing = !!user;
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <form onSubmit={handleSubmit}>
         <DialogTitle>
           {isEditing ? 'Editar Usuário' : 'Novo Usuário'}
         </DialogTitle>
+
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, pt: 1 }}>
             <TextField
@@ -92,5 +110,4 @@ const UserForm = ({ user, open, onClose, onSubmit }: UserFormProps) => {
     </Dialog>
   );
 };
-
 export default UserForm;

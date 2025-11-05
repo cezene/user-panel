@@ -3,6 +3,8 @@ import { Box, Container, Button, Stack, IconButton } from '@mui/material';
 import { Add, Sort } from '@mui/icons-material';
 import UserTable from './ui/UserTable';
 import SearchBar from './ui/SearchBar';
+import UserForm from './ui/UserForm';
+import DeleteConfirmation from './ui/DeleteConfirmation';
 
 const mockUsers: User[] = [
   {
@@ -35,29 +37,68 @@ const UserTableContainer = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isSorted, setIsSorted] = useState(false);
   const [users, setUsers] = useState(mockUsers);
+  const [formOpen, setFormOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [deletingUser, setDeletingUser] = useState<User | null>(null); 
 
   const handleEdit = (user: User) => {
-    console.log('Editar usuário:', user.name);
+    setEditingUser(user);
+    setFormOpen(true);
   };
 
-  const handleDelete = (user: User) => {
-    console.log('Deletar usuário:', user.name);
+  const handleDeleteClick = (user: User) => {
+    setDeletingUser(user);
+    setDeleteOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deletingUser) {
+      setUsers((prevUsers) =>
+        prevUsers.map((u) =>
+          u.id === deletingUser.id ? { ...u, status: 'Inativo' } : u
+        )
+      );
+      setDeleteOpen(false);
+      setDeletingUser(null);
+    }
   };
 
   const handleAddUser = () => {
-    console.log('Adicionar novo usuário');
+    setEditingUser(null);
+    setFormOpen(true);
   };
 
   const handleSort = () => {
     if (isSorted) {
-      setUsers(mockUsers);
+      setUsers((prevUsers) => [...prevUsers].sort((a, b) => a.id - b.id));
     } else {
-      const sortedUsers = [...users].sort((a, b) =>
-        a.name.localeCompare(b.name)
+      setUsers((prevUsers) =>
+        [...prevUsers].sort((a, b) => a.name.localeCompare(b.name))
       );
-      setUsers(sortedUsers);
     }
     setIsSorted(!isSorted);
+  };
+
+  const handleFormSubmit = (formData: User) => {
+    if (editingUser) {
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === editingUser.id
+            ? { ...formData, id: editingUser.id }
+            : user
+        )
+      );
+    } else {
+      const newUser: User = {
+        ...formData,
+        id: Math.max(...users.map((u) => u.id)) + 1,
+      };
+      setUsers((prevUsers) => [...prevUsers, newUser]);
+    }
+
+    setFormOpen(false);
+    setEditingUser(null);
   };
 
   const filteredUsers = users.filter(
@@ -68,6 +109,26 @@ const UserTableContainer = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
+      <UserForm
+        user={editingUser}
+        open={formOpen}
+        onClose={() => {
+          setFormOpen(false);
+          setEditingUser(null);
+        }}
+        onSubmit={handleFormSubmit}
+      />
+
+      <DeleteConfirmation
+        open={deleteOpen}
+        user={deletingUser}
+        onClose={() => {
+          setDeleteOpen(false);
+          setDeletingUser(null);
+        }}
+        onConfirm={handleDeleteConfirm}
+      />
+
       <Box
         sx={{
           mb: 4,
@@ -120,7 +181,7 @@ const UserTableContainer = () => {
       <UserTable
         users={filteredUsers}
         onEdit={handleEdit}
-        onDelete={handleDelete}
+        onDelete={handleDeleteClick}
       />
     </Container>
   );
