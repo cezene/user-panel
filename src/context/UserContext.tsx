@@ -14,6 +14,25 @@ type UserAction =
   | { type: 'SET_SEARCH'; payload: string }
   | { type: 'TOGGLE_SORT' };
 
+const STORAGE_KEY = 'users_data';
+
+const loadFromStorage = (): User[] | null => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+
+    if (!stored) return null;
+
+    return JSON.parse(stored);
+  } catch (error) {
+    console.error('Erro ao carregar do localStorage:', error);
+    return null;
+  }
+};
+
+const saveToStorage = (users: User[]) => {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+};
+
 const initialState: UserState = {
   users: [],
   searchTerm: '',
@@ -21,26 +40,36 @@ const initialState: UserState = {
 };
 
 const userReducer = (state: UserState, action: UserAction): UserState => {
+  let newState: UserState;
   switch (action.type) {
     case 'SET_USERS':
-      return { ...state, users: action.payload };
+      newState = {
+        ...state,
+        users: action.payload,
+      };
+      saveToStorage(action.payload);
+      return newState;
 
     case 'ADD_USER':
-      return {
+      newState = {
         ...state,
         users: [...state.users, action.payload],
       };
+      saveToStorage(newState.users);
+      return newState;
 
     case 'UPDATE_USER':
-      return {
+      newState = {
         ...state,
         users: state.users.map((user) =>
           user.id === action.payload.id ? action.payload : user
         ),
       };
+      saveToStorage(newState.users);
+      return newState;
 
     case 'DELETE_USER':
-      return {
+      newState = {
         ...state,
         users: state.users.map((user) =>
           user.id === action.payload
@@ -48,6 +77,8 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
             : user
         ),
       };
+      saveToStorage(newState.users);
+      return newState;
 
     case 'SET_SEARCH':
       return { ...state, searchTerm: action.payload };
@@ -95,7 +126,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    fetchUsers();
+    const cachedUsers = loadFromStorage();
+    if (cachedUsers) {
+      dispatch({ type: 'SET_USERS', payload: cachedUsers });
+    } else {
+      fetchUsers();
+    }
   }, []);
 
   const addUser = (userData: Omit<User, 'id'>) => {
