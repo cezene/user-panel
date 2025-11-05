@@ -5,42 +5,23 @@ import UserTable from './ui/UserTable';
 import SearchBar from './ui/SearchBar';
 import UserForm from './ui/UserForm';
 import DeleteConfirmation from './ui/DeleteConfirmation';
-
-const mockUsers: User[] = [
-  {
-    id: 1,
-    name: 'Maria Silva',
-    email: 'mariasilva@gmail.com',
-    status: 'Ativo',
-  },
-  {
-    id: 2,
-    name: 'João Santos',
-    email: 'joaosantos@hotmail.com',
-    status: 'Ativo',
-  },
-  {
-    id: 3,
-    name: 'Ana Oliveira',
-    email: 'ana.oliveira@company.com',
-    status: 'Ativo',
-  },
-  {
-    id: 4,
-    name: 'Carlos Eduardo',
-    email: 'carlos.eduardo@empresa.com',
-    status: 'Inativo',
-  },
-];
+import { useUserContext } from '../context/UserContext';
 
 const UserTableContainer = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isSorted, setIsSorted] = useState(false);
-  const [users, setUsers] = useState(mockUsers);
+  const {
+    state,
+    addUser,
+    updateUser,
+    deleteUser,
+    setSearchTerm,
+    toggleSort,
+    getFilteredUsers,
+  } = useUserContext();
+
   const [formOpen, setFormOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [deletingUser, setDeletingUser] = useState<User | null>(null); 
+  const [deletingUser, setDeletingUser] = useState<User | null>(null);
 
   const handleEdit = (user: User) => {
     setEditingUser(user);
@@ -54,11 +35,7 @@ const UserTableContainer = () => {
 
   const handleDeleteConfirm = () => {
     if (deletingUser) {
-      setUsers((prevUsers) =>
-        prevUsers.map((u) =>
-          u.id === deletingUser.id ? { ...u, status: 'Inativo' } : u
-        )
-      );
+      deleteUser(deletingUser.id);
       setDeleteOpen(false);
       setDeletingUser(null);
     }
@@ -69,43 +46,18 @@ const UserTableContainer = () => {
     setFormOpen(true);
   };
 
-  const handleSort = () => {
-    if (isSorted) {
-      setUsers((prevUsers) => [...prevUsers].sort((a, b) => a.id - b.id));
-    } else {
-      setUsers((prevUsers) =>
-        [...prevUsers].sort((a, b) => a.name.localeCompare(b.name))
-      );
-    }
-    setIsSorted(!isSorted);
-  };
-
   const handleFormSubmit = (formData: User) => {
     if (editingUser) {
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === editingUser.id
-            ? { ...formData, id: editingUser.id }
-            : user
-        )
-      );
+      updateUser({ ...formData, id: editingUser.id });
     } else {
-      const newUser: User = {
-        ...formData,
-        id: Math.max(...users.map((u) => u.id)) + 1,
-      };
-      setUsers((prevUsers) => [...prevUsers, newUser]);
+      addUser(formData);
     }
 
     setFormOpen(false);
     setEditingUser(null);
   };
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredUsers = getFilteredUsers();
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -144,15 +96,15 @@ const UserTableContainer = () => {
           justifyContent="center"
           sx={{ width: '100%', maxWidth: '800px' }}
         >
-          <SearchBar value={searchTerm} onChange={setSearchTerm} />
+          <SearchBar value={state.searchTerm} onChange={setSearchTerm} />
 
           <IconButton
-            onClick={handleSort}
+            onClick={toggleSort}
             sx={{
               border: '1px solid',
               borderColor: 'gray.300',
               borderRadius: 2,
-              backgroundColor: isSorted ? '#b6d5f0' : 'transparent',
+              backgroundColor: state.isSorted ? '#b6d5f0' : 'transparent',
               color: 'primary.main',
               '&:hover': {
                 backgroundColor: 'action.hover',
@@ -161,14 +113,13 @@ const UserTableContainer = () => {
               minHeight: 48,
             }}
             aria-label={
-              isSorted ? 'Remover ordenação' : 'Ordenar alfabeticamente'
+              state.isSorted ? 'Remover ordenação' : 'Ordenar alfabeticamente'
             }
           >
             <Sort />
           </IconButton>
 
           <Button
-            className="add-user-button"
             variant="contained"
             startIcon={<Add />}
             onClick={handleAddUser}

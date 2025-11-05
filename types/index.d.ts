@@ -29,3 +29,18 @@ declare interface DeleteConfirmationProps {
   onClose: () => void;
   onConfirm: () => void;
 }
+
+declare interface UserState {
+  users: User[];
+  searchTerm: string;
+  isSorted: boolean;
+}
+declare interface UserContextType {
+  state: UserState;
+  addUser: (user: Omit<User, 'id'>) => void;
+  updateUser: (user: User) => void;
+  deleteUser: (id: number) => void;
+  setSearchTerm: (term: string) => void;
+  toggleSort: () => void;
+  getFilteredUsers: () => User[];
+}
