@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Box, Container, Button, Stack, IconButton } from '@mui/material';
 import { Add, Sort } from '@mui/icons-material';
-import UserTable from './UserTable';
-import SearchBar from './SearchBar';
+import UserTable from './ui/UserTable';
+import SearchBar from './ui/SearchBar';
 
 const mockUsers: User[] = [
   {

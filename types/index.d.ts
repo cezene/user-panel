@@ -13,5 +13,12 @@ declare interface User {
   id: number;
   name: string;
   email: string;
-  status: "Ativo" | "Inativo";
+  status: 'Ativo' | 'Inativo';
+}
+
+declare interface UserFormProps {
+  user?: User | null;
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (userData: User) => void;
 }
