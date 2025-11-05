@@ -1,47 +1,30 @@
-import { createContext, useContext, useReducer, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useReducer,
+  ReactNode,
+  useEffect,
+} from 'react';
 
 type UserAction =
+  | { type: 'SET_USERS'; payload: User[] }
   | { type: 'ADD_USER'; payload: User }
   | { type: 'UPDATE_USER'; payload: User }
   | { type: 'DELETE_USER'; payload: number }
   | { type: 'SET_SEARCH'; payload: string }
   | { type: 'TOGGLE_SORT' };
 
-const initialUsers: User[] = [
-  {
-    id: 1,
-    name: 'Maria Silva',
-    email: 'mariasilva@gmail.com',
-    status: 'Ativo',
-  },
-  {
-    id: 2,
-    name: 'João Santos',
-    email: 'joaosantos@hotmail.com',
-    status: 'Ativo',
-  },
-  {
-    id: 3,
-    name: 'Ana Oliveira',
-    email: 'ana.oliveira@company.com',
-    status: 'Ativo',
-  },
-  {
-    id: 4,
-    name: 'Carlos Eduardo',
-    email: 'carlos.eduardo@empresa.com',
-    status: 'Inativo',
-  },
-];
-
 const initialState: UserState = {
-  users: initialUsers,
+  users: [],
   searchTerm: '',
   isSorted: false,
 };
 
 const userReducer = (state: UserState, action: UserAction): UserState => {
   switch (action.type) {
+    case 'SET_USERS':
+      return { ...state, users: action.payload };
+
     case 'ADD_USER':
       return {
         ...state,
@@ -89,6 +72,31 @@ const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, initialState);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(
+        'https://jsonplaceholder.typicode.com/users'
+      );
+
+      const data = await response.json();
+
+      const users: User[] = data.map((user: any) => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        status: 'Ativo' as const,
+      }));
+
+      dispatch({ type: 'SET_USERS', payload: users });
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const addUser = (userData: Omit<User, 'id'>) => {
     const newUser: User = {
