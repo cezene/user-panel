@@ -20,7 +20,7 @@ const mockOnEdit = jest.fn();
 const mockOnDelete = jest.fn();
 
 describe('UserTable - Renderização da Listagem', () => {
-  it('deve renderizar a tabela com os usuários corretamente', () => {
+  it('renders table', () => {
     render(
       <UserTable
         users={mockUsers}

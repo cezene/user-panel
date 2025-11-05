@@ -4,8 +4,8 @@ import UserForm from '../ui/UserForm';
 const mockOnSubmit = jest.fn();
 const mockOnClose = jest.fn();
 
-describe('UserForm - Criação de Novo Usuário', () => {
-  it('deve criar um novo usuário quando o formulário é enviado', async () => {
+describe('Creates new user', () => {
+  it('creates new user', async () => {
     render(
       <UserForm open={true} onClose={mockOnClose} onSubmit={mockOnSubmit} />
     );
@@ -30,7 +30,7 @@ describe('UserForm - Criação de Novo Usuário', () => {
     });
   });
 
-  it('deve validar campos obrigatórios', async () => {
+  it('validate fields', async () => {
     render(
       <UserForm open={true} onClose={mockOnClose} onSubmit={mockOnSubmit} />
     );

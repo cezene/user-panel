@@ -78,7 +78,7 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 global.fetch = jest.fn();
 
-describe('UserContext - Atualização de Estado Global', () => {
+describe('Updates global state', () => {
   beforeEach(() => {
     localStorageMock.getItem.mockClear();
     localStorageMock.setItem.mockClear();
@@ -116,7 +116,7 @@ describe('UserContext - Atualização de Estado Global', () => {
     expect(localStorageMock.setItem).toHaveBeenCalled();
   });
 
-  it('deve atualizar usuário existente', async () => {
+  it('updates existing user', async () => {
     const mockUsers = [
       {
         id: 1,
@@ -152,7 +152,7 @@ describe('UserContext - Atualização de Estado Global', () => {
     });
   });
 
-  it('deve marcar usuário como inativo ao deletar', async () => {
+  it('change user status to inactive', async () => {
     const mockUsers = [
       {
         id: 1,
@@ -180,7 +180,7 @@ describe('UserContext - Atualização de Estado Global', () => {
     });
   });
 
-  it('deve filtrar usuários por search term', async () => {
+  it('filters users', async () => {
     const mockUsers = [
       {
         id: 1,
@@ -212,7 +212,7 @@ describe('UserContext - Atualização de Estado Global', () => {
     });
   });
 
-  it('deve ordenar usuários', async () => {
+  it('order users', async () => {
     const mockUsers = [
       {
         id: 2,
