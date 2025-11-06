@@ -15,21 +15,33 @@ import { Edit, Delete } from '@mui/icons-material';
 const UserTable = memo(({ users, onEdit, onDelete }: UserTableProps) => {
   return (
     <TableContainer className="table-container">
-      <Table>
+      <Table aria-label="Lista de usuários">
         <TableHead>
           <TableRow>
-            <TableCell className="table-header-cell">Nome</TableCell>
-            <TableCell className="table-header-cell">Email</TableCell>
-            <TableCell className="table-header-cell">Status</TableCell>
-            <TableCell className="table-header-cell" align="center">
+            <TableCell className="table-header-cell" scope="col">
+              Nome
+            </TableCell>
+            <TableCell className="table-header-cell" scope="col">
+              Email
+            </TableCell>
+            <TableCell className="table-header-cell" scope="col">
+              Status
+            </TableCell>
+            <TableCell className="table-header-cell" align="center" scope="col">
               Ações
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {users.map((user) => (
-            <TableRow key={user.id} className="table-body-row">
-              <TableCell className="table-body-cell">{user.name}</TableCell>
+          {users.map((user, index) => (
+            <TableRow
+              key={user.id}
+              className="table-body-row"
+              aria-rowindex={index + 2}
+            >
+              <TableCell className="table-body-cell" scope="row">
+                {user.name}
+              </TableCell>
               <TableCell className="table-body-cell">{user.email}</TableCell>
               <TableCell className="table-body-cell">
                 <Chip
@@ -41,6 +53,7 @@ const UserTable = memo(({ users, onEdit, onDelete }: UserTableProps) => {
                   label={user.status}
                   size="small"
                   variant="filled"
+                  aria-label={`Status: ${user.status}`}
                 />
               </TableCell>
               <TableCell className="table-body-cell" align="center">
@@ -48,16 +61,18 @@ const UserTable = memo(({ users, onEdit, onDelete }: UserTableProps) => {
                   <IconButton
                     size="small"
                     onClick={() => onEdit(user)}
-                    aria-label="editar"
+                    aria-label={`Editar usuário ${user.name}`}
                     className="table-action-button"
+                    tabIndex={0}
                   >
                     <Edit fontSize="small" />
                   </IconButton>
                   <IconButton
                     size="small"
                     onClick={() => onDelete(user)}
-                    aria-label="deletar"
+                    aria-label={`Deletar usuário ${user.name}`}
                     className="table-action-button"
+                    tabIndex={0}
                   >
                     <Delete fontSize="small" />
                   </IconButton>

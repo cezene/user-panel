@@ -11,6 +11,7 @@ const SearchBar = ({ value, onChange }: SearchBarProps) => {
         placeholder="Pesquisar..."
         size="medium"
         fullWidth={false}
+        aria-label="Pesquisar usuários"
         slotProps={{
           input: {
             endAdornment: (

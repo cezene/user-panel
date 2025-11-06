@@ -53,9 +53,15 @@ const UserForm = ({ user, open, onClose, onSubmit }: UserFormProps) => {
   const isEditing = !!user;
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      aria-labelledby="user-form-title"
+    >
       <form onSubmit={handleSubmit}>
-        <DialogTitle>
+        <DialogTitle id="user-form-title">
           {isEditing ? 'Editar Usuário' : 'Novo Usuário'}
         </DialogTitle>
 
@@ -67,6 +73,8 @@ const UserForm = ({ user, open, onClose, onSubmit }: UserFormProps) => {
               onChange={handleChange('name')}
               fullWidth
               autoFocus
+              required
+              aria-required="true"
             />
 
             <TextField
@@ -75,6 +83,8 @@ const UserForm = ({ user, open, onClose, onSubmit }: UserFormProps) => {
               value={formData.email}
               onChange={handleChange('email')}
               fullWidth
+              required
+              aria-required="true"
             />
             {!!isEditing && (
               <FormControl component="fieldset">
@@ -83,6 +93,7 @@ const UserForm = ({ user, open, onClose, onSubmit }: UserFormProps) => {
                   row
                   value={formData.status}
                   onChange={handleChange('status')}
+                  aria-label="Status do usuário"
                 >
                   <FormControlLabel
                     value="Ativo"
