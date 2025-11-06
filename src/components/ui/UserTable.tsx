@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import {
   Table,
   TableBody,
@@ -11,7 +12,7 @@ import {
 } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 
-const UserTable = ({ users, onEdit, onDelete }: UserTableProps) => {
+const UserTable = memo(({ users, onEdit, onDelete }: UserTableProps) => {
   return (
     <TableContainer className="table-container">
       <Table>
@@ -68,6 +69,6 @@ const UserTable = ({ users, onEdit, onDelete }: UserTableProps) => {
       </Table>
     </TableContainer>
   );
-};
+});
 
 export default UserTable;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Box, Container, Button, Stack, IconButton } from '@mui/material';
 import { Add, Sort } from '@mui/icons-material';
 import UserTable from './ui/UserTable';
@@ -23,61 +23,67 @@ const UserTableContainer = () => {
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deletingUser, setDeletingUser] = useState<User | null>(null);
 
-  const handleEdit = (user: User) => {
+  const handleEdit = useCallback((user: User) => {
     setEditingUser(user);
     setFormOpen(true);
-  };
+  }, []);
 
-  const handleDeleteClick = (user: User) => {
+  const handleDeleteClick = useCallback((user: User) => {
     setDeletingUser(user);
     setDeleteOpen(true);
-  };
+  }, []);
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = useCallback(() => {
     if (deletingUser) {
       deleteUser(deletingUser.id);
       setDeleteOpen(false);
       setDeletingUser(null);
     }
-  };
+  }, [deletingUser, deleteUser]);
 
-  const handleAddUser = () => {
+  const handleAddUser = useCallback(() => {
     setEditingUser(null);
     setFormOpen(true);
-  };
+  }, []);
 
-  const handleFormSubmit = (formData: User) => {
-    if (editingUser) {
-      updateUser({ ...formData, id: editingUser.id });
-    } else {
-      addUser(formData);
-    }
-
+  const handleFormClose = useCallback(() => {
     setFormOpen(false);
     setEditingUser(null);
-  };
+  }, []);
 
-  const filteredUsers = getFilteredUsers();
+  const handleDeleteClose = useCallback(() => {
+    setDeleteOpen(false);
+    setDeletingUser(null);
+  }, []);
+
+  const handleFormSubmit = useCallback(
+    (formData: User) => {
+      if (editingUser) {
+        updateUser({ ...formData, id: editingUser.id });
+      } else {
+        addUser(formData);
+      }
+      setFormOpen(false);
+      setEditingUser(null);
+    },
+    [editingUser, addUser, updateUser]
+  );
+
+  const filteredUsers = useMemo(() => getFilteredUsers(), [getFilteredUsers]);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <UserForm
         user={editingUser}
         open={formOpen}
-        onClose={() => {
-          setFormOpen(false);
-          setEditingUser(null);
-        }}
+        onClose={handleFormClose}
         onSubmit={handleFormSubmit}
       />
 
       <DeleteConfirmation
         open={deleteOpen}
         user={deletingUser}
-        onClose={() => {
-          setDeleteOpen(false);
-          setDeletingUser(null);
-        }}
+        onClose={handleDeleteClose}
         onConfirm={handleDeleteConfirm}
       />
 
@@ -113,7 +119,7 @@ const UserTableContainer = () => {
               minHeight: 48,
             }}
             aria-label={
-              state.isSorted ? 'Remover ordenação' : 'Ordenar alfabeticamente'
+             state.isSorted ? 'Remover ordenação' : 'Ordenar alfabeticamente'
             }
           >
             <Sort />
@@ -124,7 +130,7 @@ const UserTableContainer = () => {
             startIcon={<Add />}
             onClick={handleAddUser}
           >
-            Novo Usuário
+             Novo Usuário
           </Button>
         </Stack>
       </Box>

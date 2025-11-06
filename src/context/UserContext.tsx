@@ -2,8 +2,10 @@ import {
   createContext,
   useContext,
   useReducer,
-  ReactNode,
   useEffect,
+  ReactNode,
+  useMemo,
+  useCallback,
 } from 'react';
 
 type UserAction =
@@ -24,7 +26,7 @@ const loadFromStorage = (): User[] | null => {
 
     return JSON.parse(stored);
   } catch (error) {
-    console.error('Erro ao carregar do localStorage:', error);
+    console.error('Error loading from localStorage:', error);
     return null;
   }
 };
@@ -41,6 +43,7 @@ const initialState: UserState = {
 
 const userReducer = (state: UserState, action: UserAction): UserState => {
   let newState: UserState;
+
   switch (action.type) {
     case 'SET_USERS':
       newState = {
@@ -104,7 +107,7 @@ const UserContext = createContext<UserContextType | null>(null);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(userReducer, initialState);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const response = await fetch(
         'https://jsonplaceholder.typicode.com/users'
@@ -121,60 +124,75 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
       dispatch({ type: 'SET_USERS', payload: users });
     } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
+      console.error('Error fetching users:', error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const cachedUsers = loadFromStorage();
+
     if (cachedUsers) {
       dispatch({ type: 'SET_USERS', payload: cachedUsers });
     } else {
       fetchUsers();
     }
+  }, [fetchUsers]);
+
+  const addUser = useCallback(
+    (userData: Omit<User, 'id'>) => {
+      const newUser: User = {
+        ...userData,
+        id: Math.max(...state.users.map((u) => u.id), 0) + 1,
+      };
+      dispatch({ type: 'ADD_USER', payload: newUser });
+    },
+    [state.users]
+  );
+
+  const updateUser = useCallback((user: User) => {
+    dispatch({ type: 'UPDATE_USER', payload: user });
   }, []);
 
-  const addUser = (userData: Omit<User, 'id'>) => {
-    const newUser: User = {
-      ...userData,
-      id: Math.max(...state.users.map((u) => u.id), 0) + 1,
-    };
-    dispatch({ type: 'ADD_USER', payload: newUser });
-  };
-
-  const updateUser = (user: User) => {
-    dispatch({ type: 'UPDATE_USER', payload: user });
-  };
-
-  const deleteUser = (id: number) => {
+  const deleteUser = useCallback((id: number) => {
     dispatch({ type: 'DELETE_USER', payload: id });
-  };
+  }, []);
 
-  const setSearchTerm = (term: string) => {
+  const setSearchTerm = useCallback((term: string) => {
     dispatch({ type: 'SET_SEARCH', payload: term });
-  };
+  }, []);
 
-  const toggleSort = () => {
+  const toggleSort = useCallback(() => {
     dispatch({ type: 'TOGGLE_SORT' });
-  };
+  }, []);
 
-  const getFilteredUsers = () => {
+  const getFilteredUsers = useCallback(() => {
     return state.users.filter(
       (user) =>
         user.name.toLowerCase().includes(state.searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(state.searchTerm.toLowerCase())
     );
-  };
+  }, [state.users, state.searchTerm]);
 
-  const value: UserContextType = {
-    state,
-    addUser,
-    updateUser,
-    deleteUser,
-    setSearchTerm,
-    toggleSort,
-    getFilteredUsers,
-  };
+  const value = useMemo<UserContextType>(
+    () => ({
+      state,
+      addUser,
+      updateUser,
+      deleteUser,
+      setSearchTerm,
+      toggleSort,
+      getFilteredUsers,
+    }),
+    [
+      state,
+      addUser,
+      updateUser,
+      deleteUser,
+      setSearchTerm,
+      toggleSort,
+      getFilteredUsers,
+    ]
+  );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
@@ -182,7 +200,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 export const useUserContext = () => {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error('useUserContext deve ser usado dentro de UserProvider');
+    throw new Error('useUserContext must be used within UserProvider');
   }
   return context;
 };
