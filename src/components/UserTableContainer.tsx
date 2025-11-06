@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
-import { Box, Container, Button, Stack, IconButton } from '@mui/material';
-import { Add, Sort } from '@mui/icons-material';
+import { Box, Container, Button, Stack } from '@mui/material';
+import { Add } from '@mui/icons-material';
 import UserTable from './ui/UserTable';
 import SearchBar from './ui/SearchBar';
 import UserForm from './ui/UserForm';
@@ -104,33 +104,12 @@ const UserTableContainer = () => {
         >
           <SearchBar value={state.searchTerm} onChange={setSearchTerm} />
 
-          <IconButton
-            onClick={toggleSort}
-            sx={{
-              border: '1px solid',
-              borderColor: 'gray.300',
-              borderRadius: 2,
-              backgroundColor: state.isSorted ? '#b6d5f0' : 'transparent',
-              color: 'primary.main',
-              '&:hover': {
-                backgroundColor: 'action.hover',
-              },
-              minWidth: 48,
-              minHeight: 48,
-            }}
-            aria-label={
-             state.isSorted ? 'Remover ordenação' : 'Ordenar alfabeticamente'
-            }
-          >
-            <Sort />
-          </IconButton>
-
           <Button
             variant="contained"
             startIcon={<Add />}
             onClick={handleAddUser}
           >
-             Novo Usuário
+            Novo Usuário
           </Button>
         </Stack>
       </Box>
@@ -139,6 +118,8 @@ const UserTableContainer = () => {
         users={filteredUsers}
         onEdit={handleEdit}
         onDelete={handleDeleteClick}
+        onSort={toggleSort}
+        isSorted={state.isSorted}
       />
     </Container>
   );

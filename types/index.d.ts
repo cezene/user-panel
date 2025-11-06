@@ -7,6 +7,8 @@ declare interface UserTableProps {
   users: User[];
   onEdit: (user: User) => void;
   onDelete: (user: User) => void;
+  onSort: () => void;
+  isSorted: boolean;
 }
 
 declare interface User {

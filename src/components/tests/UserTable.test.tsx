@@ -18,6 +18,7 @@ const mockUsers: User[] = [
 
 const mockOnEdit = jest.fn();
 const mockOnDelete = jest.fn();
+const mockOnSort = jest.fn();
 
 describe('UserTable - Renderização da Listagem', () => {
   it('renders table', () => {
@@ -26,6 +27,8 @@ describe('UserTable - Renderização da Listagem', () => {
         users={mockUsers}
         onEdit={mockOnEdit}
         onDelete={mockOnDelete}
+        onSort={mockOnSort}
+        isSorted={false}
       />
     );
 
